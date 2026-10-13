@@ -1259,14 +1259,14 @@
               <h4>Company</h4>
               <div class="foot-links">
                 <a href="#partners">Partners</a>
-                <a href="mailto:hello@sshells.com">Contact</a>
+                <a href="mailto:yolanda@sshells.com,eli@sshells.com">Contact</a>
               </div>
             </nav>
             <nav aria-label="Platform">
               <h4>Platform</h4>
               <div class="foot-links">
-                <a href="#partners">Stakeholder login</a>
-                <a href="mailto:hello@sshells.com">hello@sshells.com</a>
+                <a href="mailto:yolanda@sshells.com">yolanda@sshells.com</a>
+                <a href="mailto:eli@sshells.com">eli@sshells.com</a>
                 <button type="button" data-open-demo>Explore the demo</button>
               </div>
             </nav>
@@ -1387,7 +1387,7 @@
                 <ul class="activity">
                   <li><span>Rent payment verified — July</span><span class="when">JUL 12</span></li>
                   <li><span>+120 pts earned through rent</span><span class="when">JUL 12</span></li>
-                  <li><span>Lease summary ready — Danziger Str. 11</span><span class="when">JUL 08</span></li>
+                  <li><span>Lease summary ready — Musterstraße 12</span><span class="when">JUL 08</span></li>
                   <li><span>Deposit routes compared — partner-backed options</span><span class="when">JUL 05</span></li>
                 </ul>
               </div>
@@ -1401,7 +1401,7 @@
                 <p class="p-sub">Tap a task to tick it off — the progress is real, inside this demo, and your Overview card updates with it.</p>
               </div>
               <div class="d-card">
-                <div style="display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;font-weight:700;flex-wrap:wrap"><span>Settling into Danziger Str. 11, 10405 Berlin</span><span class="mono" id="mpProgressLabel">42%</span></div>
+                <div style="display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;font-weight:700;flex-wrap:wrap"><span>Settling into Musterstraße 12, 12345 Musterstadt</span><span class="mono" id="mpProgressLabel">42%</span></div>
                 <div class="bar" style="margin:.6rem 0 1rem"><i id="mpProgressBar" style="width:42%;background:var(--gold)"></i></div>
                 <ul class="task-list" id="taskList">
                   <li class="done"><button class="task" type="button" aria-label="Toggle task: Lease signed and summarised"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button><span><span class="task-t">Lease signed &amp; summarised</span><span class="task-d">Plain-language summary ready in Lease intelligence</span></span></li>
@@ -1447,7 +1447,7 @@
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10z"/><path d="m9 11.5 2 2 4-4.5"/></svg>
                           Reviewed</span>
                       </div>
-                      <p class="addr">Danziger Str. 11, 10405 Berlin, Prenzlauer Berg, 3rd floor, left-hand unit</p>
+                      <p class="addr">Musterstraße 12, 12345 Musterstadt, 3rd floor, left-hand unit</p>
                       <p class="landlord">Katharina Wohlgemuth</p>
                       <span class="file-chip">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
@@ -1553,7 +1553,7 @@
                         <label for="fldAddress">Rental address</label>
                         <input id="fldAddress" type="text" placeholder="Not extracted yet" autocomplete="off" />
                         <span class="cite">Page 1 · Parties</span>
-                        <button class="use-extracted" type="button" data-use-extracted="address">Use extracted value: Danziger Str. 11, 10405 Berlin</button>
+                        <button class="use-extracted" type="button" data-use-extracted="address">Use extracted value: Musterstraße 12, 12345 Musterstadt</button>
                       </div>
                       <div class="fld filled">
                         <label for="fldLandlord">Landlord or property manager</label>
@@ -1772,7 +1772,7 @@
                 </div>
                 <div class="set-row">
                   <span class="lab"><b>Home</b><span>Your current move</span></span>
-                  <input class="set-input" id="setHome" type="text" value="Danziger Str. 11, 10405 Berlin" aria-label="Home" />
+                  <input class="set-input" id="setHome" type="text" value="Musterstraße 12, 12345 Musterstadt" aria-label="Home" />
                 </div>
                 <div class="set-row">
                   <span class="lab"><b>Language</b><span>Workspace and summaries</span></span>
@@ -1845,7 +1845,7 @@
           </button>
         </div>
         <div class="chat-log" id="chatLog" aria-live="polite">
-          <div class="msg landa"><span class="who">Landa</span>Hi Maya — I've read your confirmed lease for Danziger Str. 11. Ask me about your rent, your deposit, or how the lease works, and I'll answer from the document itself, with the passage cited.</div>
+          <div class="msg landa"><span class="who">Landa</span>Hi Maya — I've read your confirmed lease for Musterstraße 12. Ask me about your rent, your deposit, or how the lease works, and I'll answer from the document itself, with the passage cited.</div>
         </div>
         <div class="landa-foot">
           <div class="chip-row">
@@ -2065,7 +2065,7 @@
 
         /* ---------- lease intelligence: review -> confirm ---------- */
         var trackedFields = [
-          { key: "address", input: "fldAddress", extracted: "Danziger Str. 11, 10405 Berlin, Prenzlauer Berg, 3rd floor, left-hand unit" },
+          { key: "address", input: "fldAddress", extracted: "Musterstraße 12, 12345 Musterstadt, 3rd floor, left-hand unit" },
           { key: "rent", input: "fldRent", extracted: "1200" },
           { key: "deposit", input: "fldDeposit", extracted: "2940" }
         ];
