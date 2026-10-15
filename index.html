@@ -868,6 +868,33 @@
         .foot-grid { grid-template-columns: 1fr; }
         .chat-form { flex-direction: column; }
       }
+    
+      /* ---- Renter research survey ---- */
+      .survey-card{max-width:660px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:clamp(1.4rem,3.5vw,2.4rem)}
+      .survey-progress{height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin-bottom:1rem}
+      .survey-progress>div{height:100%;width:0;background:var(--gold);border-radius:99px;transition:width .4s var(--ease)}
+      .survey-step{font-family:"IBM Plex Mono",monospace;font-size:.75rem;color:var(--ink-3);margin:0 0 1.2rem}
+      .survey-q{font-size:1.25rem;font-weight:700;color:var(--ink);margin:0 0 .4rem}
+      .survey-hint{color:var(--ink-2);font-size:.95rem;margin:0 0 1.2rem}
+      .survey-opts{display:grid;gap:.6rem;margin:0 0 1rem}
+      .survey-opt{display:flex;align-items:center;gap:.7rem;border:1.5px solid var(--line);border-radius:12px;padding:.85rem 1rem;cursor:pointer;font-weight:600;color:var(--ink);background:#fff;transition:border-color .15s,background .15s}
+      .survey-opt:hover{border-color:var(--gold)}
+      .survey-opt.selected{border-color:var(--gold);background:var(--gold-soft)}
+      .survey-opt input{accent-color:var(--gold-deep);width:1.1rem;height:1.1rem;margin:0}
+      .survey-scale{display:flex;gap:.5rem;margin:0 0 .4rem}
+      .survey-scale button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:.8rem 0;font-size:1.05rem;font-weight:700;color:var(--ink);cursor:pointer}
+      .survey-scale button.selected{border-color:var(--gold);background:var(--gold-soft)}
+      .survey-scale-labels{display:flex;justify-content:space-between;font-size:.8rem;color:var(--ink-3);margin-bottom:1rem}
+      .survey-input,.survey-textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:.85rem 1rem;font:inherit;color:var(--ink);background:#fff;box-sizing:border-box}
+      .survey-textarea{min-height:110px;resize:vertical}
+      .survey-consent{display:flex;gap:.6rem;align-items:flex-start;margin-top:1rem;font-size:.9rem;color:var(--ink-2);cursor:pointer}
+      .survey-consent input{margin-top:.2rem;accent-color:var(--gold-deep)}
+      .survey-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.4rem}
+      .survey-err{display:none;color:#b3261e;font-size:.9rem;margin:.8rem 0 0}
+      .survey-err.show{display:block}
+      .survey-success{text-align:center;padding:1rem 0}
+      .survey-success h3{font-size:1.4rem;margin:0 0 .6rem;color:var(--ink)}
+      .survey-success p{color:var(--ink-2)}
     </style>
   </head>
   <body>
@@ -1237,6 +1264,172 @@
           </div>
         </section>
 
+      
+        <!-- RENTER RESEARCH SURVEY -->
+        <section id="research">
+          <div class="wrap">
+            <div class="sec-head reveal">
+              <span class="tag">Renter research</span>
+              <h2>Help us build what renters actually need.</h2>
+              <p>Eight questions, two minutes. Your answers validate what Sshells should become.</p>
+            </div>
+            <div class="survey-card reveal">
+              <div id="surveyWrap">
+                <div class="survey-progress" aria-hidden="true"><div id="svBar"></div></div>
+                <p class="survey-step" id="svStep"></p>
+                <div id="svBody"></div>
+                <p class="survey-err" id="svErr" role="alert"></p>
+                <div class="survey-nav">
+                  <button class="btn btn-ghost" type="button" id="svBack">&larr; Back</button>
+                  <button class="btn btn-gold" type="button" id="svNext">Continue &rarr;</button>
+                </div>
+              </div>
+              <div class="survey-success" id="svSuccess" hidden>
+                <h3>Thank you &mdash; that&rsquo;s real validation.</h3>
+                <p>Your answers go straight into our research. If you left an email, we&rsquo;ll be in touch about early access.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <script>
+        (function(){
+          // Supabase project for survey storage. The anon key is public by design
+          // (it ships in client-side code). Paste it from Supabase dashboard:
+          // Project Settings -> API -> "anon public" key.
+          var SUPABASE_URL = "https://mchajwbcgoqfmfrcnoom.supabase.co";
+          var SUPABASE_ANON_KEY = "PASTE_SUPABASE_ANON_KEY_HERE";
+
+          var QUESTIONS = [
+            {key:"city", type:"text", q:"Where do you currently rent?", hint:"City is enough.", placeholder:"e.g. Berlin", required:false},
+            {key:"cold_rent_range", type:"radio", q:"What is your monthly cold rent (Kaltmiete)?", required:true,
+             options:["Under \u20ac500","\u20ac500 \u2013 \u20ac800","\u20ac800 \u2013 \u20ac1,200","\u20ac1,200 \u2013 \u20ac1,500","Over \u20ac1,500"]},
+            {key:"deposit_method", type:"radio", q:"How did you pay your rental deposit?", required:true,
+             options:["Cash \u2014 3 months\u2019 rent","Bank guarantee","Insurance-backed guarantee","I haven\u2019t paid a deposit yet"]},
+            {key:"deposit_pain", type:"scale", q:"How painful was locking up that deposit?", hint:"If you haven\u2019t paid one, imagine it.", required:true, low:"Barely noticed", high:"Really hurt"},
+            {key:"guarantee_interest", type:"radio", q:"Would you use a guarantee product instead of cash if it cost less overall?", required:true,
+             options:["Yes","Maybe \u2014 tell me more","No"]},
+            {key:"bank_connect_interest", type:"radio", q:"Would you connect your bank to verify rent payments if it earned you rewards?", required:true,
+             options:["Yes","Maybe","No"]},
+            {key:"improvement_text", type:"textarea", q:"What would make renting better for you?", required:false, placeholder:"Anything \u2014 big or small."},
+            {key:"email", type:"email", q:"Email for early access (optional)", hint:"We\u2019ll only write about launch and early access.", required:false, consent:true}
+          ];
+
+          var idx = 0, answers = {}, consent = false;
+          var body = document.getElementById("svBody"),
+              step = document.getElementById("svStep"),
+              bar = document.getElementById("svBar"),
+              err = document.getElementById("svErr"),
+              back = document.getElementById("svBack"),
+              next = document.getElementById("svNext");
+          if(!body) return;
+
+          function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+          function render(){
+            var q = QUESTIONS[idx], n = QUESTIONS.length;
+            step.textContent = "Question " + (idx+1) + " of " + n;
+            bar.style.width = Math.round(idx/n*100) + "%";
+            err.classList.remove("show");
+            back.style.visibility = idx === 0 ? "hidden" : "visible";
+            next.innerHTML = idx === n-1 ? "Submit answers" : "Continue &rarr;";
+            var h = '<p class="survey-q">' + esc(q.q) + (q.required ? ' <span style="color:var(--gold-deep)">*</span>' : "") + "</p>";
+            if(q.hint) h += '<p class="survey-hint">' + esc(q.hint) + "</p>";
+            var val = answers[q.key];
+            if(q.type === "text" || q.type === "email"){
+              h += '<input class="survey-input" type="' + q.type + '" id="svField" placeholder="' + esc(q.placeholder||"") + '" value="' + esc(val||"") + '"' + (q.type==="email"?' autocomplete="email"':"") + ">";
+            } else if(q.type === "textarea"){
+              h += '<textarea class="survey-textarea" id="svField" placeholder="' + esc(q.placeholder||"") + '">' + esc(val||"") + "</textarea>";
+            } else if(q.type === "radio"){
+              h += '<div class="survey-opts" role="radiogroup">';
+              q.options.forEach(function(o){
+                h += '<label class="survey-opt' + (val===o?" selected":"") + '"><input type="radio" name="svOpt" value="' + esc(o) + '"' + (val===o?" checked":"") + "><span>" + esc(o) + "</span></label>";
+              });
+              h += "</div>";
+            } else if(q.type === "scale"){
+              h += '<div class="survey-scale" role="radiogroup">';
+              for(var i=1;i<=5;i++){
+                h += '<button type="button" data-v="'+i+'" class="'+(val===i?"selected":"")+'">'+i+"</button>";
+              }
+              h += '</div><div class="survey-scale-labels"><span>'+esc(q.low)+'</span><span>'+esc(q.high)+"</span></div>";
+            }
+            if(q.consent){
+              h += '<label class="survey-consent"><input type="checkbox" id="svConsent"' + (consent?" checked":"") + "><span>Sshells may store my answers and contact me about launch and early access.</span></label>";
+            }
+            body.innerHTML = h;
+
+            body.querySelectorAll(".survey-opt input").forEach(function(r){
+              r.addEventListener("change", function(){
+                answers[q.key] = r.value;
+                body.querySelectorAll(".survey-opt").forEach(function(l){l.classList.toggle("selected", l.querySelector("input").checked);});
+              });
+            });
+            body.querySelectorAll(".survey-scale button").forEach(function(b){
+              b.addEventListener("click", function(){
+                answers[q.key] = parseInt(b.getAttribute("data-v"),10);
+                body.querySelectorAll(".survey-scale button").forEach(function(x){x.classList.toggle("selected", x===b);});
+              });
+            });
+            var f = document.getElementById("svField");
+            if(f) f.addEventListener("input", function(){ answers[q.key] = f.value.trim(); });
+            var c = document.getElementById("svConsent");
+            if(c) c.addEventListener("change", function(){ consent = c.checked; });
+          }
+
+          function fail(msg){ err.textContent = msg; err.classList.add("show"); }
+
+          back.addEventListener("click", function(){ if(idx>0){ idx--; render(); } });
+
+          next.addEventListener("click", function(){
+            var q = QUESTIONS[idx], v = answers[q.key];
+            if(q.required && (v===undefined || v==="" || v===null)) return fail("Please answer to continue.");
+            if(q.type==="email" && v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return fail("That email doesn\u2019t look right.");
+            if(q.key==="email" && v && !consent) return fail("Please tick the consent box so we may contact you.");
+            if(idx < QUESTIONS.length-1){ idx++; render(); return; }
+            submit();
+          });
+
+          function submit(){
+            next.disabled = true; next.textContent = "Sending\u2026";
+            if(SUPABASE_ANON_KEY.indexOf("PASTE_") === 0){
+              next.disabled = false; render();
+              return fail("Survey storage isn\u2019t configured yet \u2014 please try again later.");
+            }
+            var payload = {
+              city: answers.city || null,
+              cold_rent_range: answers.cold_rent_range || null,
+              deposit_method: answers.deposit_method || null,
+              deposit_pain: answers.deposit_pain || null,
+              guarantee_interest: answers.guarantee_interest || null,
+              bank_connect_interest: answers.bank_connect_interest || null,
+              improvement_text: answers.improvement_text || null,
+              email: answers.email || null,
+              consent: !!consent,
+              source: "website"
+            };
+            fetch(SUPABASE_URL + "/rest/v1/survey_responses", {
+              method: "POST",
+              headers: {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal"
+              },
+              body: JSON.stringify(payload)
+            }).then(function(r){
+              if(!r.ok) throw new Error("HTTP " + r.status);
+              document.getElementById("surveyWrap").hidden = true;
+              document.getElementById("svSuccess").hidden = false;
+            }).catch(function(){
+              next.disabled = false; render();
+              fail("Couldn\u2019t send \u2014 check your connection and try again.");
+            });
+          }
+
+          render();
+        })();
+        </script>
+
       </main>
 
       <footer class="site">
@@ -1252,7 +1445,7 @@
                 <a href="#top">Home</a>
                 <a href="#why">Why Sshells</a>
                 <a href="#how">How it works</a>
-                <a href="#waitlist">Renter research</a>
+                <a href="#research">Renter research</a>
               </div>
             </nav>
             <nav aria-label="Company">
